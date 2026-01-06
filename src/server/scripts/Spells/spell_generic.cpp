@@ -2019,14 +2019,11 @@ class spell_gen_animal_blood : public AuraScript
     {
         // Remove all auras with spell id 46221, except the one currently being applied
         while (Aura* aur = GetUnitOwner()->GetOwnedAura(SPELL_ANIMAL_BLOOD, ObjectGuid::Empty, ObjectGuid::Empty, 0, GetAura()))
-            GetUnitOwner()->RemoveOwnedAura(aur, AURA_REMOVE_BY_EXPIRE);
+            GetUnitOwner()->RemoveOwnedAura(aur);
     }
 
     void OnRemove(AuraEffect const* /*aurEff*/, AuraEffectHandleModes /*mode*/)
     {
-        if (GetTargetApplication()->GetRemoveMode() == AURA_REMOVE_BY_EXPIRE)
-            return;
-
         if (Unit* owner = GetUnitOwner())
             if (owner->IsInWater())
                 owner->CastSpell(owner, SPELL_SPAWN_BLOOD_POOL, true);
@@ -2047,7 +2044,7 @@ class spell_spawn_blood_pool : public SpellScript
     void SetDest(SpellDestination &dest)
     {
         Unit* caster = GetCaster();
-        LiquidData liquidStatus = caster->GetMap()->GetLiquidData(caster->GetPhaseMask(), caster->GetPositionX(), caster->GetPositionY(), caster->GetPositionZ(), caster->GetCollisionHeight(), {});
+        LiquidData liquidStatus = caster->GetMap()->GetLiquidData(caster->GetPhaseMask(), caster->GetPositionX(), caster->GetPositionY(), caster->GetPositionZ(), caster->GetCollisionHeight(), MAP_ALL_LIQUIDS);
 
         float level = liquidStatus.Level > INVALID_HEIGHT ? liquidStatus.Level : caster->GetPositionZ();
         Position pos = Position(caster->GetPositionX(), caster->GetPositionY(), level, caster->GetOrientation());

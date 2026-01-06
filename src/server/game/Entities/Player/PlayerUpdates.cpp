@@ -447,6 +447,7 @@ void Player::Update(uint32 p_time)
         m_delayed_unit_relocation_timer = 0;
         RemoveFromNotify(NOTIFY_VISIBILITY_CHANGED);
     }
+    sScriptMgr->OnPlayerAfterUpdate(this, p_time);
 }
 
 void Player::UpdateMirrorTimers()
@@ -1462,9 +1463,6 @@ void Player::UpdatePvPState()
 
     if (pvpInfo.IsHostile) // in hostile area
     {
-        if (IsInFlight()) // on taxi
-            return;
-
         if (!IsPvP() || pvpInfo.EndTimer != 0)
             UpdatePvP(true, true);
     }

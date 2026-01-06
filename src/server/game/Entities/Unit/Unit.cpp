@@ -1864,7 +1864,7 @@ void Unit::DealMeleeDamage(CalcDamageInfo* damageInfo, bool durabilityLoss)
 
     auto canTakeMeleeDamage = [&]()
     {
-        return victim->IsAlive() && !victim->IsInFlight() && (!victim->IsCreature() || !victim->ToCreature()->IsEvadingAttacks());
+        return victim->IsAlive() && !victim->HasUnitState(UNIT_STATE_IN_FLIGHT) && (!victim->IsCreature() || !victim->ToCreature()->IsEvadingAttacks());
     };
 
     if (!canTakeMeleeDamage())
@@ -1956,11 +1956,10 @@ void Unit::DealMeleeDamage(CalcDamageInfo* damageInfo, bool durabilityLoss)
             Probability = 0.65f * victim->GetLevel() + 0.5f;
 
         uint32 VictimDefense = victim->GetDefenseSkillValue();
-        uint32 VictimAuraDefense = -victim->GetTotalAuraModifier(SPELL_AURA_MOD_ATTACKER_MELEE_CRIT_CHANCE) * 25;
         uint32 AttackerMeleeSkill = GetUnitMeleeSkill();
 
         // xinef: fix daze mechanics
-        Probability -= ((float)VictimDefense + (float)VictimAuraDefense - AttackerMeleeSkill) * 0.1428f;
+        Probability -= ((float)VictimDefense - AttackerMeleeSkill) * 0.1428f;
 
         if (Probability > 40.0f)
             Probability = 40.0f;
@@ -10403,6 +10402,11 @@ ReputationRank Unit::GetFactionReactionTo(FactionTemplateEntry const* factionTem
         }
     }
 
+    return GetFactionReactionTo(factionTemplateEntry, targetFactionTemplateEntry);
+}
+
+ReputationRank Unit::GetFactionReactionTo(FactionTemplateEntry const* factionTemplateEntry, FactionTemplateEntry const* targetFactionTemplateEntry)
+{
     // common faction based check
     if (factionTemplateEntry->IsHostileTo(*targetFactionTemplateEntry))
         return REP_HOSTILE;
@@ -10412,6 +10416,7 @@ ReputationRank Unit::GetFactionReactionTo(FactionTemplateEntry const* factionTem
         return REP_FRIENDLY;
     if (factionTemplateEntry->factionFlags & FACTION_TEMPLATE_FLAG_HATES_ALL_EXCEPT_FRIENDS)
         return REP_HOSTILE;
+
     // neutral by default
     return REP_NEUTRAL;
 }
@@ -15975,6 +15980,11 @@ void Unit::CleanupBeforeRemoveFromMap(bool finalCleanup)
     if (IsInWorld()) // not in world and not being removed atm
         RemoveFromWorld();
 
+    // Added for mod_playerbots crash fixes; cancel and remove pending events before aura/spellmod cleanup.
+    // Without this SpellEvent may be cancelled later during EventProcessor destruction after auras/spellmods 
+    // are already removed and leading to invalid access in Player::RestoreSpellMods on logout.
+    m_Events.KillAllEvents(false);
+
     ASSERT(GetGUID());
 
     // A unit may be in removelist and not in world, but it is still in grid
@@ -18225,6 +18235,8 @@ void Unit::Kill(Unit* killer, Unit* victim, bool durabilityLoss, WeaponAttackTyp
             }
         }
 
+        sScriptMgr->OnPlayerbotCheckKillTask(player, victim);
+
         // Dungeon specific stuff, only applies to players killing creatures
         if (creature->GetInstanceId())
         {
@@ -18417,8 +18429,10 @@ void Unit::SetControlled(bool apply, UnitState state, Unit* source /*= nullptr*/
 
 void Unit::SetStunned(bool apply)
 {
-    if (IsInFlight())
+    if (HasUnitState(UNIT_STATE_IN_FLIGHT))
+    {
         return;
+    }
 
     if (apply)
     {
@@ -19167,11 +19181,23 @@ void Unit::SendPlaySpellVisual(uint32 id)
     SendMessageToSet(&data, true);
 }
 
+void Unit::SendPlaySpellVisual(ObjectGuid guid, uint32 id)
+{
+    WorldPacket data(SMSG_PLAY_SPELL_VISUAL, 8 + 4);
+    data << guid;
+    data << uint32(id); // SpellVisualKit.dbc index
+    SendMessageToSet(&data, true);
+}
+
 void Unit::SendPlaySpellImpact(ObjectGuid guid, uint32 id)
 {
     WorldPacket data(SMSG_PLAY_SPELL_IMPACT, 8 + 4);
     data << guid;       // target
     data << uint32(id); // SpellVisualKit.dbc index
+
+    if (IsPlayer())
+        ToPlayer()->SendDirectMessage(&data);
+    else
     SendMessageToSet(&data, true);
 }
 
@@ -21493,4 +21519,19 @@ Player const* Unit::GetClientControlling() const
         }
     }
     return nullptr;
+}
+
+void Unit::SetCannotReachTargetUnit(bool cannotReach, bool isChase)
+{
+    if (cannotReach == m_cannotReachTarget)
+    {
+        return;
+    }
+
+    m_cannotReachTarget = cannotReach;
+}
+
+bool Unit::CanNotReachTarget() const
+{
+    return m_cannotReachTarget;
 }

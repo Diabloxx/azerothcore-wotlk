@@ -39,7 +39,6 @@ enum Creatures
     NPC_KURZEL                  = 26664,
     NPC_DRAKKARI_GUARDIAN       = 26620,
     NPC_RISEN_DRAKKARI_WARRIOR  = 26635,
-    NPC_FETID_TROLL_CORPSE      = 27598,
 };
 
 enum GameObjects

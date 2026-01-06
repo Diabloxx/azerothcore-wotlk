@@ -169,9 +169,34 @@ void ScriptMgr::OnPlayerDuelEnd(Player* winner, Player* loser, DuelCompleteType 
     CALL_ENABLED_HOOKS(PlayerScript, PLAYERHOOK_ON_DUEL_END, script->OnPlayerDuelEnd(winner, loser, type));
 }
 
+void ScriptMgr::OnPlayerChat(Player* player, uint32 type, uint32 lang, std::string& msg)
+{
+    CALL_ENABLED_HOOKS(PlayerScript, PLAYERHOOK_ON_CHAT, script->OnPlayerChat(player, type, lang, msg));
+}
+
 void ScriptMgr::OnPlayerBeforeSendChatMessage(Player* player, uint32& type, uint32& lang, std::string& msg)
 {
     CALL_ENABLED_HOOKS(PlayerScript, PLAYERHOOK_ON_BEFORE_SEND_CHAT_MESSAGE, script->OnPlayerBeforeSendChatMessage(player, type, lang, msg));
+}
+
+void ScriptMgr::OnPlayerChat(Player* player, uint32 type, uint32 lang, std::string& msg, Player* receiver)
+{
+    CALL_ENABLED_HOOKS(PlayerScript, PLAYERHOOK_ON_CHAT_WITH_RECEIVER, script->OnPlayerChat(player, type, lang, msg, receiver));
+}
+
+void ScriptMgr::OnPlayerChat(Player* player, uint32 type, uint32 lang, std::string& msg, Group* group)
+{
+    CALL_ENABLED_HOOKS(PlayerScript, PLAYERHOOK_ON_CHAT_WITH_GROUP, script->OnPlayerChat(player, type, lang, msg, group));
+}
+
+void ScriptMgr::OnPlayerChat(Player* player, uint32 type, uint32 lang, std::string& msg, Guild* guild)
+{
+    CALL_ENABLED_HOOKS(PlayerScript, PLAYERHOOK_ON_CHAT_WITH_GUILD, script->OnPlayerChat(player, type, lang, msg, guild));
+}
+
+void ScriptMgr::OnPlayerChat(Player* player, uint32 type, uint32 lang, std::string& msg, Channel* channel)
+{
+    CALL_ENABLED_HOOKS(PlayerScript, PLAYERHOOK_ON_CHAT_WITH_CHANNEL, script->OnPlayerChat(player, type, lang, msg, channel));
 }
 
 void ScriptMgr::OnPlayerEmote(Player* player, uint32 emote)
@@ -194,10 +219,16 @@ void ScriptMgr::OnPlayerBeforeUpdate(Player* player, uint32 p_time)
     CALL_ENABLED_HOOKS(PlayerScript, PLAYERHOOK_ON_BEFORE_UPDATE, script->OnPlayerBeforeUpdate(player, p_time));
 }
 
+void ScriptMgr::OnPlayerAfterUpdate(Player* player, uint32 p_time)
+{
+    CALL_ENABLED_HOOKS(PlayerScript, PLAYERHOOK_ON_AFTER_UPDATE, script->OnPlayerAfterUpdate(player, p_time));
+}
+
 void ScriptMgr::OnPlayerUpdate(Player* player, uint32 p_time)
 {
     CALL_ENABLED_HOOKS(PlayerScript, PLAYERHOOK_ON_UPDATE, script->OnPlayerUpdate(player, p_time));
 }
+
 
 void ScriptMgr::OnPlayerLogin(Player* player)
 {

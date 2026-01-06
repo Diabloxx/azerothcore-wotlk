@@ -31,39 +31,50 @@ DoorData const doorData[] =
     { 0,                    0,                      DOOR_TYPE_ROOM }
 };
 
-struct instance_drak_tharon_keep : public InstanceScript
+class instance_drak_tharon_keep : public InstanceMapScript
 {
-    instance_drak_tharon_keep(Map* map) : InstanceScript(map)
-    {
-        SetHeaders(DataHeader);
-        SetBossNumber(MAX_ENCOUNTERS);
-        LoadDoorData(doorData);
-    }
+public:
+    instance_drak_tharon_keep() : InstanceMapScript("instance_drak_tharon_keep", MAP_DRAK_THARON_KEEP) { }
 
-    void OnGameObjectCreate(GameObject* go) override
+    struct instance_drak_tharon_keep_InstanceScript : public InstanceScript
     {
-        switch (go->GetEntry())
+        instance_drak_tharon_keep_InstanceScript(Map* map) : InstanceScript(map)
         {
-            case GO_NOVOS_CRYSTAL_1:
-            case GO_NOVOS_CRYSTAL_2:
-            case GO_NOVOS_CRYSTAL_3:
-            case GO_NOVOS_CRYSTAL_4:
-                AddDoor(go);
-                break;
+            SetHeaders(DataHeader);
+            SetBossNumber(MAX_ENCOUNTERS);
+            LoadDoorData(doorData);
         }
-    }
 
-    void OnGameObjectRemove(GameObject* go) override
-    {
-        switch (go->GetEntry())
+        void OnGameObjectCreate(GameObject* go) override
         {
-            case GO_NOVOS_CRYSTAL_1:
-            case GO_NOVOS_CRYSTAL_2:
-            case GO_NOVOS_CRYSTAL_3:
-            case GO_NOVOS_CRYSTAL_4:
-                RemoveDoor(go);
-                break;
+            switch (go->GetEntry())
+            {
+                case GO_NOVOS_CRYSTAL_1:
+                case GO_NOVOS_CRYSTAL_2:
+                case GO_NOVOS_CRYSTAL_3:
+                case GO_NOVOS_CRYSTAL_4:
+                    AddDoor(go);
+                    break;
+            }
         }
+
+        void OnGameObjectRemove(GameObject* go) override
+        {
+            switch (go->GetEntry())
+            {
+                case GO_NOVOS_CRYSTAL_1:
+                case GO_NOVOS_CRYSTAL_2:
+                case GO_NOVOS_CRYSTAL_3:
+                case GO_NOVOS_CRYSTAL_4:
+                    RemoveDoor(go);
+                    break;
+            }
+        }
+    };
+
+    InstanceScript* GetInstanceScript(InstanceMap* map) const override
+    {
+        return new instance_drak_tharon_keep_InstanceScript(map);
     }
 };
 
@@ -110,7 +121,7 @@ class spell_dtk_summon_random_drakkari : public SpellScript
 
 void AddSC_instance_drak_tharon_keep()
 {
-    RegisterInstanceScript(instance_drak_tharon_keep, MAP_DRAK_THARON_KEEP);
+    new instance_drak_tharon_keep();
     RegisterSpellScript(spell_dtk_raise_dead_aura);
     RegisterSpellScript(spell_dtk_summon_random_drakkari);
 }
