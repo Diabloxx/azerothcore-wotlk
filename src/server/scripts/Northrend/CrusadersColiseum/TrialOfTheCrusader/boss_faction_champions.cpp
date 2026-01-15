@@ -32,7 +32,7 @@ enum eAIs
 
 enum eSharedSpells
 {
-    SPELL_ANTI_AOE                              = 68595,
+    SPELL_ANTI_AOE                              = 0,
     SPELL_PVP_TRINKET                           = 65547,
 };
 
