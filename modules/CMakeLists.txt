@@ -319,6 +319,12 @@ set_target_properties(modules
     FOLDER
       "modules")
 
+if (MSVC)
+  target_compile_options(modules
+    PRIVATE
+      /bigobj)
+endif()
+
 # Generate precompiled header
 # if (USE_SCRIPTPCH)
 #   list(APPEND ALL_SCRIPT_PROJECTS modules ${DYNAMIC_SCRIPT_MODULE_PROJECTS})
