@@ -116,7 +116,19 @@ public:
         return name;
     }
     uint64 GetLastModifiedTime() const { return _lastModifiedTime; }
+    uint64 GetCreateTime() const { return _createTime; }
+    uint16 GetMapId() const { return _mapId; }
+    float GetPositionX() const { return _posX; }
+    float GetPositionY() const { return _posY; }
+    float GetPositionZ() const { return _posZ; }
     GMTicketEscalationStatus GetEscalatedStatus() const { return _escalatedStatus; }
+    ObjectGuid GetClosedByGUID() const { return _closedBy; }
+    ObjectGuid GetResolvedByGUID() const { return _resolvedBy; }
+    std::string const& GetComment() const { return _comment; }
+    std::string const& GetResponseText() const { return _response; }
+    bool IsViewed() const { return _viewed; }
+    bool NeedResponse() const { return _needResponse; }
+    bool NeedMoreHelp() const { return _needMoreHelp; }
 
     void SetEscalatedStatus(GMTicketEscalationStatus escalatedStatus) { _escalatedStatus = escalatedStatus; }
     void SetAssignedTo(ObjectGuid guid, bool isAdmin)

@@ -830,6 +830,11 @@ bool ScriptMgr::OnPlayerCanUseChat(Player* player, uint32 type, uint32 language,
     CALL_ENABLED_BOOLEAN_HOOKS(PlayerScript, PLAYERHOOK_CAN_PLAYER_USE_CHANNEL_CHAT, !script->OnPlayerCanUseChat(player, type, language, msg, channel));
 }
 
+bool ScriptMgr::OnPlayerWhisper(Player* player, uint32 type, uint32 language, std::string& msg, std::string const& receiverName, Player* receiver)
+{
+    CALL_ENABLED_BOOLEAN_HOOKS(PlayerScript, PLAYERHOOK_ON_PLAYER_WHISPER, !script->OnPlayerWhisper(player, type, language, msg, receiverName, receiver));
+}
+
 void ScriptMgr::OnPlayerLearnTalents(Player* player, uint32 talentId, uint32 talentRank, uint32 spellid)
 {
     CALL_ENABLED_HOOKS(PlayerScript, PLAYERHOOK_ON_PLAYER_LEARN_TALENTS, script->OnPlayerLearnTalents(player, talentId, talentRank, spellid));

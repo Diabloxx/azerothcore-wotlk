@@ -469,6 +469,7 @@ public: /* PlayerScript */
     bool OnPlayerCanUseChat(Player* player, uint32 type, uint32 language, std::string& msg, Group* group);
     bool OnPlayerCanUseChat(Player* player, uint32 type, uint32 language, std::string& msg, Guild* guild);
     bool OnPlayerCanUseChat(Player* player, uint32 type, uint32 language, std::string& msg, Channel* channel);
+    bool OnPlayerWhisper(Player* player, uint32 type, uint32 language, std::string& msg, std::string const& receiverName, Player* receiver);
     void OnPlayerLearnTalents(Player* player, uint32 talentId, uint32 talentRank, uint32 spellid);
     void OnPlayerEnterCombat(Player* player, Unit* enemy);
     void OnPlayerLeaveCombat(Player* player);

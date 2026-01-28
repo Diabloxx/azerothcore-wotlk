@@ -385,6 +385,10 @@ void WorldSession::HandleMessagechatOpcode(WorldPacket& recvData)
                 }
 
                 Player* receiver = ObjectAccessor::FindPlayerByName(to, false);
+
+                if (!sScriptMgr->OnPlayerWhisper(GetPlayer(), type, lang, msg, to, receiver))
+                    return;
+
                 bool senderIsPlayer = AccountMgr::IsPlayerAccount(GetSecurity());
                 bool receiverIsPlayer = AccountMgr::IsPlayerAccount(receiver ? receiver->GetSession()->GetSecurity() : SEC_PLAYER);
 
