@@ -214,7 +214,6 @@ enum PlayerHook
     PLAYERHOOK_ON_CAN_GIVE_LEVEL,
     PLAYERHOOK_ON_SEND_LIST_INVENTORY,
     PLAYERHOOK_ON_GIVE_REPUTATION,
-    PLAYERHOOK_ON_PLAYER_WHISPER,
     PLAYERHOOK_END
 };
 
@@ -309,9 +308,6 @@ public:
 
     // The following methods are called when a player sends a chat message.
     virtual void OnPlayerBeforeSendChatMessage(Player* /*player*/, uint32& /*type*/, uint32& /*lang*/, std::string& /*msg*/) { }
-
-    // Called when a player sends a whisper (can intercept offline targets).
-    [[nodiscard]] virtual bool OnPlayerWhisper(Player* /*player*/, uint32 /*type*/, uint32 /*language*/, std::string& /*msg*/, std::string const& /*receiverName*/, Player* /*receiver*/) { return true; }
 
     // Called when a player sends a whisper (receiver may be nullptr when target is offline)
     [[nodiscard]] virtual bool OnPlayerWhisper(Player* /*player*/, uint32 /*type*/, uint32 /*language*/, std::string& /*msg*/, std::string const& /*receiverName*/, Player* /*receiver*/) { return true; }
