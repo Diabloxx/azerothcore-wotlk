@@ -132,6 +132,7 @@ foreach(APPLICATION_NAME ${APPLICATIONS_BUILD_LIST})
       PUBLIC
         shared)
   elseif(${APP_PROJECT_NAME} MATCHES "worldserver")
+    find_package(DPP CONFIG REQUIRED)
     target_link_libraries(${APP_PROJECT_NAME}
       PUBLIC
         modules
@@ -140,6 +141,10 @@ foreach(APPLICATION_NAME ${APPLICATIONS_BUILD_LIST})
         gsoap
         readline
         gperftools)
+
+    target_link_libraries(${APP_PROJECT_NAME}
+      PRIVATE
+        dpp::dpp)
 
     if (UNIX AND NOT NOJEM)
       set(${APP_PROJECT_NAME}_LINK_FLAGS "-pthread -lncurses ${${APP_PROJECT_NAME}_LINK_FLAGS}")
